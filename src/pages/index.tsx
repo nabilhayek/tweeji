@@ -15,11 +15,12 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 import { type RouterOutputs, api } from "~/utils/api";
+import Image from "next/image";
 
 export default function Home() {
   const { data, isLoading } = api.post.getAll.useQuery();
 
-  const { user, isSignedIn } = useUser();
+  const { isSignedIn } = useUser();
 
   console.log(data);
 
@@ -36,10 +37,12 @@ export default function Home() {
     return (
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-4">
-          <img
+          <Image
             src={author.imageUrl}
-            alt="Profile picture"
-            className="h-12 w-12 rounded-full"
+            alt={`${author.username}'s profile picture`}
+            width={48}
+            height={48}
+            className="rounded-full"
           />
           <div className="flex flex-col">
             <span className="text-slate-600">
