@@ -16,9 +16,18 @@ dayjs.extend(relativeTime);
 
 import { type RouterOutputs, api } from "~/utils/api";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function Home() {
+  const [input, setInput] = useState("");
   const { data, isLoading } = api.post.getAll.useQuery();
+  const ctx = api.useUtils();
+  const { mutate, isLoading: isPosting } = api.post.create.useMutation({
+    onSuccess: () => {
+      setInput("");
+      void ctx.post.getAll.invalidate();
+    },
+  });
 
   const { isSignedIn } = useUser();
 
@@ -65,7 +74,7 @@ export default function Home() {
         <meta name="description" content="Twitter but only with emojis" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex h-screen items-center justify-center py-6">
+      <main className="flex h-screen items-center justify-center md:py-6">
         <div className="flex h-full w-full flex-col justify-between gap-6 rounded-md border p-6 shadow-xl md:max-w-2xl">
           <div>
             {!isSignedIn && (
@@ -93,10 +102,17 @@ export default function Home() {
           <Separator />
           <div className="flex w-full gap-6">
             <Input
-              disabled={!isSignedIn}
+              disabled={!isSignedIn || isPosting}
               placeholder="Type your message here."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
             />
-            <Button disabled={!isSignedIn}>Send</Button>
+            <Button
+              disabled={!isSignedIn || isPosting}
+              onClick={() => mutate({ content: input })}
+            >
+              Send
+            </Button>
           </div>
         </div>
       </main>
