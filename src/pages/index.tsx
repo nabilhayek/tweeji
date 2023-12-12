@@ -31,8 +31,6 @@ export default function Home() {
 
   const { isSignedIn } = useUser();
 
-  console.log(data);
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
